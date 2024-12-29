@@ -13,12 +13,16 @@ import (
 	"net/url"
 	"sync"
 
-	_ "github.com/joho/godotenv/autoload"
+	"github.com/joho/godotenv"
 )
 
 var cache = &Cache{TTL: 1*time.Hour}
 
 func main() {
+	if err := godotenv.Load(".env"); err != nil {
+		_ = godotenv.Load("/etc/fedinfo/env")
+	}
+
 	cacheFile := os.Getenv("CACHE_FILE")
 	log.Printf("populating cache from %s", cacheFile)
 
