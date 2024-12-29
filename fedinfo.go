@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"net/url"
 	"sync"
+	"syscall"
 
 	"github.com/joho/godotenv"
 )
@@ -66,7 +67,7 @@ func main() {
 	}()
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 	<-c
 
 	log.Println("interrupt received, stopped accepting requests")
