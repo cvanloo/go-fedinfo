@@ -138,6 +138,7 @@ type (
 )
 
 func nodeInfoRoute(w http.ResponseWriter, r *http.Request) error {
+	log.Printf("request received: %s", r.URL.Path)
 	if err := r.ParseForm(); err != nil {
 		return err
 	}
