@@ -13,8 +13,10 @@ import (
 	"net/url"
 	"sync"
 	"syscall"
+	"strings"
 
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 )
 
 var cache = &Cache{TTL: 1*time.Hour}
@@ -50,14 +52,20 @@ func main() {
 		}
 	}()
 
+	origins := strings.Split(os.Getenv("ORIGINS"), ",")
+	log.Printf("allowed origins %v", origins)
+
 	listen := os.Getenv("LISTEN")
 	log.Printf("listening on %s", listen)
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /node-info", HandlerWithError(nodeInfoRoute))
+	handler := cors.New(cors.Options{
+		AllowedOrigins: origins,
+	}).Handler(mux)
 	srv := &http.Server{
 		Addr: listen,
-		Handler: mux,
+		Handler: handler,
 	}
 
 	go func() {
